@@ -66,12 +66,13 @@ class Blockchain:
 
 # Creating a Web App
 app = Flask(__name__)
+#app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False #in case of 500 Internal Server Error
 
 # Creating a Blockchain
 blockchain = Blockchain()
 
 #Mining a new Block
-@app.route('http://127.0.0.1:5000/mine_block', methods=['GET'])
+@app.route('/mine_block', methods=['GET'])
 def mine_block():
     previous_block = blockchain.get_previous_block()
     previous_proof = previous_block['proof']
@@ -87,9 +88,12 @@ def mine_block():
     return jsonify(response), 200
     
 #Getting the full Blockchain
-@app.route('http://127.0.0.1:5000/get_chain', methods=['GET'])
+@app.route('/get_chain', methods=['GET'])
 def get_chain():
     response = {'chain' : blockchain.chain,
                 'lenght' : len(blockchain.chain) 
                 }
     return jsonify(response), 200
+
+#Running the app
+app.run(host = '0.0.0.0', port = 5000)
