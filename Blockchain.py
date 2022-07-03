@@ -16,6 +16,7 @@ class Blockchain:
     def __init__(self):
         self.chain = []
         self.create_block(proof = 1, previous_hash = '0')
+        self.proof_complexity = 3
 
     def create_block(self, proof, previous_hash):
         block = {'index' : len(self.chain) + 1,
@@ -35,9 +36,8 @@ class Blockchain:
         check_proof = False
         while check_proof is False:
             hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
-            if hash_operation[:4] == '0000':
-                check_proof = True
-            else:
+            check_proof = self.check_leading_zeros(hash_operation)
+            if check_proof == False:
                 new_proof += 1
         return new_proof
             
@@ -56,10 +56,16 @@ class Blockchain:
             previous_proof = previous_block['proof']
             proof = block['proof']
             hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()
-            if hash_operation[:4] != '0000':
+            if(self.check_leading_zeros(hash_operation) == False):
                 return False
             previous_block = block
             block_index += 1
+        return True
+    
+    def check_leading_zeros(self, hash):
+        for character in hash[:self.proof_complexity]:
+            if character != '0':
+                return False
         return True
              
         
