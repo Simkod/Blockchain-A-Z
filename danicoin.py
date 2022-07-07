@@ -22,6 +22,7 @@ class Blockchain:
         self.chain = []
         self.transactions = []
         self.create_block(proof = 1, previous_hash = '0')
+        self.nodes = set()
         self.proof_complexity = 3 #Number of leading zeros in hash operation
 
     def create_block(self, proof, previous_hash):
@@ -82,11 +83,36 @@ class Blockchain:
             if character != '0':
                 return False
         return True
-             
+    
+    def add_node(self, address):
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+        
+    def replace_chain(self):
+        network = self.nodes
+        longest_chain = None
+        max_lenght = len(self.chain)
+        for node in network:
+            response = requests.get(f'http://(node)/get_chain')
+            if response.status_code == 200:
+                lenght = response.json()['lenght']
+                chain = response.json()['chain']
+                if lenght > max_lenght and self.is_chain_valid(chain):
+                    max_lenght = lenght
+                    longest_chain = chain
+        if longest_chain:
+            self.chain = longest_chain
+            return True
+        return False
+        
+            
 # Part 2 - Mining blockchain
 
 # Creating a Web App
 app = Flask(__name__)
+
+# Creating an address for the node on Port 5000
+node_address = str(uuid4()).replace('-','')
 
 blockchain = Blockchain()
 
@@ -97,12 +123,14 @@ def mine_block():
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
+    blockchain.add_transaction(sender = node_address, receiver = 'Dani', amount = 10)
     block = blockchain.create_block(proof, previous_hash)
     response = {'message' : 'New block successfully mined',
                 'index' : block['index'],
                 'timestamp' : block['timestamp'],
                 'proof' : block['proof'],
-                'previous_hash' : block['previous_hash']
+                'previous_hash' : block['previous_hash'],
+                'transactions' : block['transactions']
                 }
     return jsonify(response), 200
     
