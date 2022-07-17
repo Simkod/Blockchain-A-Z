@@ -22,13 +22,13 @@ contract DaniCoin_ico
     // Get equity in danicoins of a purchaser
     function equity_in_danicoins(address purchaser) external constant returns (uint) 
     {
-        return equity_danicoins(purchaser);
+        return equity_danicoins[purchaser];
     }
 
     // Get equity in USD of a purchaser
-    function equity_in_danicoins(address purchaser) external constant returns (uint) 
+    function equity_in_usd(address purchaser) external constant returns (uint) 
     {
-        return equity_usd(purchaser);
+        return equity_usd[purchaser];
     }
 
     // Purchasing DaniCoins
