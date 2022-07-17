@@ -1,7 +1,6 @@
-
+# -*- coding: utf-8 -*-
 """
-Created on Tue Jul  5 22:35:09 2022
-@Module 2 - Create a Cryptocurrency
+Created on Sun Jul 17 15:39:43 2022
 
 @author: sida
 """
@@ -187,4 +186,4 @@ def replace_chain():
     return jsonify(response), 200
 
 # Run the app
-app.run(host = '0.0.0.0', port = 5000)
+app.run(host = '0.0.0.0', port = 5001)
