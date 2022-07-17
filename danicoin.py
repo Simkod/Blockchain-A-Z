@@ -53,7 +53,7 @@ class Blockchain:
         encoded_block = json.dumps(block, sort_keys = True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
         
-    def is_chain_valid(self):
+    def is_chain_valid(self, chain):
         chain = self.chain
         previous_block = chain[0]
         block_index = 1;
@@ -93,7 +93,7 @@ class Blockchain:
         longest_chain = None
         max_lenght = len(self.chain)
         for node in network:
-            response = requests.get(f'http://(node)/get_chain')
+            response = requests.get(f'http://{node}/get_chain')
             if response.status_code == 200:
                 lenght = response.json()['lenght']
                 chain = response.json()['chain']
